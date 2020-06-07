@@ -1,26 +1,32 @@
 iz1:-start(Res),write(Res).
 
-d:-search([1,2,3],X),write(X).
+elemCount([],X,Acc):-Acc = X.
+elemCount([_|T],X,Acc):-X1 is X+1,elemCount(T,X1,Acc).
 
-ifMore(R1,Res,Res1):-
-    R1 > Res,
-    Res1 = R1.
-ifMore(_,Res,Res1):-
-    Res1 = Res.
+isPeriod([],_,_).
+isPeriod(G,P,Per1):-P = [], append(P,Per1,T), isPeriod(G,T,Per1).
+isPeriod([H|T],[X|Y],Per1):-H=X,isPeriod(T,Y,Per1).
 
-countElem([],_).
-countElem([_|T],X):-X1 is X+1,countElem(T,X1).
-
-search([_,_|T],R1):-search_1(T,R1,[],T).
-search_1([H|_],R1,Per,TS):-append(H,Per,Per1), isPeriod(Per1,TS),X is 0,countElem(Per1,X),R1 = X.
-search_1([_|T],R1,Per,TS):-search(T,R1,Per,TS).
+search([_,_|T],R1):-search_1(T,R1,[]).
+search_1([],_,_):-!.
+search_1([H|T],R1,Per):-
+    append([H],Per,Per1),
+    isPeriod([H|T],Per1,Per1),
+    Rr is R1 + 1,
+    search_1(T,Rr,Per1).
+search_1([_|T],R1,Per):-search_1(T,R1,Per).
 
 start_1(_,N,N).
 start_1(Res,N,I):-
-    Fr is 1/N,
+    Fr is 1/I,
     name(Fr,FrList),
     search(FrList,R1),
-    ifMore(R1,Res,Res1),
+    R1 > Res,
     I1 is I + 1,
-    start_1(Res1,N,I1).
-start(Res):-start_1(Res,1000,2).
+    start_1(R1,N,I1).
+start_1(Res,N,I):-
+    I1 is I + 1,
+    start_1(Res,N,I1).
+
+start(Res):-start_1(0,1000,2).
+
