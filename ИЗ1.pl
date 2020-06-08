@@ -1,4 +1,4 @@
-iz1:-start(Res),pp(Res,Per),write(Per).
+iz1:-start(Res),pp(Res,Per),writeln(Per), E is 1/Per, write(E).
 
 pp(Res,Per):-pp_1(Res,Per,0,_).
 pp_1([],Per,_,C):-Per = C.
