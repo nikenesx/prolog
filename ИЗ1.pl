@@ -1,32 +1,43 @@
 iz1:-start(Res),write(Res).
 
-elemCount([],X,Acc):-Acc = X.
-elemCount([_|T],X,Acc):-X1 is X+1,elemCount(T,X1,Acc).
+isPeriod(List,List2):-isPeriod_1(List,List2,List2,0).
+isPeriod_1(_,_,_,2).
+isPeriod_1([],_,_,2).
+isPeriod_1(G,P,Per1,I):-
+    P = [],
+    append(P,Per1,T),
+    I1 is I + 1,
+    isPeriod_1(G,T,Per1,I1).
+isPeriod_1([H|T],[X|Y],Per1,I):-
+    H = X,
+    isPeriod_1(T,Y,Per1,I).
 
-isPeriod([],_,_).
-isPeriod(G,P,Per1):-P = [], append(P,Per1,T), isPeriod(G,T,Per1).
-isPeriod([H|T],[X|Y],Per1):-H=X,isPeriod(T,Y,Per1).
+searchPeriod([_,_|Tail],R1):-searchPeriod_1(Tail,[],R1,0,Tail).
+searchPeriod_1([],_,R1,I,_):- R1 = I.
+searchPeriod_1([H|_],Acc,R1,I,Tail):-
+    I < 9,
+    append(Acc,[H],Acc1),
+    I1 is I+1,
+    isPeriod(Tail,Acc1),
+    searchPeriod_1([],Acc,R1,I1,Tail).
+searchPeriod_1([H|T],Acc,R1,I,Tail):-
+    I < 9,
+    append(Acc,[H],Acc1),
+    I1 is I + 1,
+    searchPeriod_1(T,Acc1,R1,I1,Tail).
 
-search([_,_|T],R1):-search_1(T,R1,[]).
-search_1([],_,_):-!.
-search_1([H|T],R1,Per):-
-    append([H],Per,Per1),
-    isPeriod([H|T],Per1,Per1),
-    Rr is R1 + 1,
-    search_1(T,Rr,Per1).
-search_1([_|T],R1,Per):-search_1(T,R1,Per).
-
-start_1(_,N,N).
-start_1(Res,N,I):-
+start_1(_,N,N,Nn,T):-Nn = T.
+start_1(Res,N,I,Nn,_):-
     Fr is 1/I,
     name(Fr,FrList),
-    search(FrList,R1),
+    searchPeriod(FrList,R1),
     R1 > Res,
+    Tt = Fr,
     I1 is I + 1,
-    start_1(R1,N,I1).
-start_1(Res,N,I):-
+    start_1(R1,N,I1,Nn,Tt).
+start_1(Res,N,I,Nn,T):-
     I1 is I + 1,
-    start_1(Res,N,I1).
+    start_1(Res,N,I1,Nn,T).
 
-start(Res):-start_1(0,1000,2).
+start(Nn):-start_1(0,10,7,Nn,_).
 
