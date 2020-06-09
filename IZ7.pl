@@ -1,3 +1,5 @@
+:- dynamic car/7.
+
 iz7:-
     write("Какая категория вашего автомобиля?"), nl,
     write("1. A"), nl,
@@ -38,3 +40,18 @@ iz7:-
     write("2. Электричество"), nl,
     write("3. Гибрид"), nl,
     read(MotorType), nl,
+
+    forall(
+               (car(Name, Category, IsAliveNow, BodyType, RegionOfProduction, Composition, MotorType),
+                write("Ваш автомобиль - "), write(Name), write("?"), nl,
+                write("1. Да"), nl,
+                write("2. Нет"), nl,
+                read(Answer),
+                Answer = 1),
+
+               (fail)
+	),
+
+	write("Вашего автомобиля нет в базе данных. Введите название:"), read(NewCarName),
+	assert(car(NewCarName, Category, IsAliveNow, BodyType, RegionOfProduction, Composition, MotorType)),
+	write("Автомобиль добавлен в БД!"), save('c:/Users/who/Desktop/db.pl').
